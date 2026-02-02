@@ -3,10 +3,9 @@
 import { useState, useEffect } from 'react';
 import { VillageSelector } from '@/components/VillageSelector';
 import { VoterList } from '@/components/VoterList';
-import { VoterDetail } from '@/components/VoterDetail';
-
 import { Card } from '@/components/ui/card';
 import { Voter } from '@/lib/types';
+import VoterDetail from '@/components/VoterDetail';
 
 export default function Home() {
   const [selectedVillage, setSelectedVillage] = useState<string>('');
@@ -75,6 +74,18 @@ export default function Home() {
     setCurrentIndex(0);
   };
 
+  // Add this function to handle message sent status
+  const handleMessageSent = (voterId: string, isSent: boolean) => {
+    setVoters(prevVoters =>
+      prevVoters.map(voter =>
+        voter.id === voterId
+          ? { ...voter, message_sent: isSent }
+          : voter
+      )
+    );
+  };
+
+
   const currentVoter = voters[currentIndex] || null;
 
   return (
@@ -103,59 +114,6 @@ export default function Home() {
 
         {voters.length > 0 && (
           <>
-            {/* Start Processing Section */}
-            <Card className="p-8 mb-6 animate-slide-in-up bg-gradient-to-br from-secondary/15 via-background to-accent/10 border-2 border-secondary/30 shadow-xl">
-              <div className="flex flex-col md:flex-row gap-6 items-center">
-                <div className="flex-1">
-                  <label className="block mb-3">
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="p-2 rounded-lg bg-secondary/20">
-                        <span className="text-2xl">📱</span>
-                      </div>
-                      <span className="text-lg font-bold gradient-text">मोबाइल नंबर</span>
-                    </div>
-                  </label>
-                  <input
-                    type="tel"
-                    value={mobileNumber}
-                    onChange={(e) => setMobileNumber(e.target.value)}
-                    placeholder="उदा: 9876543210 किंवा +919876543210"
-                    disabled={isProcessing}
-                    className="w-full p-3 rounded-lg text-base border-2 border-secondary/20 focus:border-secondary focus:ring-2 focus:ring-secondary/30 transition-all bg-background"
-                  />
-                  <p className="text-xs text-muted-foreground mt-3">
-                    हा नंबर सर्व व्हाट्सअँप संदेशांसाठी वापरला जाईल
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => handleStart(mobileNumber)}
-                  disabled={isProcessing || !mobileNumber.trim() || voters.length === 0}
-                  className={`gap-2 h-14 px-8 font-bold text-lg transition-all duration-300 rounded-lg ${
-                    !isProcessing && mobileNumber.trim() && voters.length > 0
-                      ? 'gradient-primary text-white shadow-xl shadow-secondary/50 hover:shadow-2xl hover:shadow-secondary/70 transform hover:scale-105 animate-pulse-glow'
-                      : 'bg-secondary/50 cursor-not-allowed'
-                  }`}
-                >
-                  <span className="mr-2">▶</span>
-                  सुरु करा
-                </button>
-              </div>
-
-              {isProcessing && (
-                <div className="mt-6 p-4 bg-gradient-to-r from-green-500/20 to-emerald-500/20 border-2 border-green-500/50 rounded-xl animate-fade-in-scale">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-bold text-green-700 dark:text-green-300">
-                      ✓ प्रक्रिया सक्रिय आहे
-                    </p>
-                    <p className="text-lg font-bold gradient-text">
-                      मतदार {currentIndex + 1} / {voters.length}
-                    </p>
-                  </div>
-                </div>
-              )}
-            </Card>
-
             {/* Main Content Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
               {/* Left Column: Voter List */}
@@ -175,6 +133,7 @@ export default function Home() {
                   totalVoters={voters.length}
                   onNext={handleNext}
                   onPrevious={handlePrevious}
+                  onMessageSent={handleMessageSent}  // Add this prop
                   startingMobileNumber={mobileNumber}
                 />
               </div>

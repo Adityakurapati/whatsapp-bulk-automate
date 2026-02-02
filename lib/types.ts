@@ -12,7 +12,9 @@ export interface Voter {
   prabhag_number: string;
   serial_number: number;
   village: string;
-  [key: string]: string | number;
+  message_sent?: boolean;
+  sent_date?: string;
+  [key: string]: string | number | boolean | undefined;
 }
 
 export interface VillageData {
