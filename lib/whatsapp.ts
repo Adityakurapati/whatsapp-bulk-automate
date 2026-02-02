@@ -28,8 +28,28 @@ export function encodeMessageForWhatsApp(message: string): string {
 }
 
 export function generateWhatsAppLink(phoneNumber: string, message: string): string {
+  // Check if phoneNumber is defined and is a string
+  if (!phoneNumber || typeof phoneNumber !== 'string') {
+    console.error('Invalid phone number:', phoneNumber);
+    alert('Invalid phone number. Please check the mobile number.');
+    return '#';
+  }
+  
   const encodedMessage = encodeMessageForWhatsApp(message);
-  const fullPhone = `${phoneNumber}`;
-  const whatsappLink = `https://wa.me/${fullPhone}?text=${encodedMessage}`;
-  return whatsappLink;
+  
+  // Clean the phone number - remove all non-digit characters
+  const cleanPhone = phoneNumber.replace(/\D/g, '');
+  
+  // Check if phone number is valid (should be 10 digits for India)
+  if (cleanPhone.length !== 10) {
+    console.error('Invalid phone number length:', cleanPhone, 'from original:', phoneNumber);
+    alert(`Invalid phone number: ${phoneNumber}. Please enter a 10-digit Indian mobile number.`);
+    return '#';
+  }
+  
+  // Format for WhatsApp API: country code + phone number
+  const fullPhone = `91${cleanPhone}`;
+  
+  // Return WhatsApp API link
+  return `https://wa.me/${fullPhone}?text=${encodedMessage}`;
 }

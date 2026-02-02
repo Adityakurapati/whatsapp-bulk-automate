@@ -32,10 +32,16 @@ export function VoterDetail({
     );
   }
 
-  const message = generateVoterMessage(voter); // Removed the second argument
-  const whatsappLink = generateWhatsAppLink(startingMobileNumber, message);
+  const message = generateVoterMessage(voter);
 
   const handleSendWhatsApp = () => {
+    // Check if voter has a mobile number
+    if (!voter.mobile) {
+      alert('या मतदाराचा मोबाइल नंबर उपलब्ध नाही');
+      return;
+    }
+    
+    const whatsappLink = generateWhatsAppLink(voter.mobile, message);
     window.open(whatsappLink, '_blank');
   };
 
@@ -56,7 +62,9 @@ export function VoterDetail({
 
         <div className="bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-500/30 rounded-lg p-3 text-center">
           <p className="text-xs font-semibold text-muted-foreground mb-1">मोबाइल नंबर</p>
-          <p className="text-lg md:text-xl font-bold gradient-text">{voter.mobile}</p>
+          <p className="text-lg md:text-xl font-bold gradient-text">
+            {voter.mobile || 'उपलब्ध नाही'}
+          </p>
         </div>
       </div>
 
@@ -88,7 +96,8 @@ export function VoterDetail({
 
         <button
           onClick={handleSendWhatsApp}
-          className="gap-2 font-bold w-full md:w-auto md:text-base py-4 md:py-6 md:px-8 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg shadow-green-500/50 hover:shadow-green-500/70 transition-all duration-300 transform hover:scale-105 animate-pulse-glow text-sm rounded-lg flex items-center justify-center"
+          disabled={!voter.mobile}
+          className="gap-2 font-bold w-full md:w-auto md:text-base py-4 md:py-6 md:px-8 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg shadow-green-500/50 hover:shadow-green-500/70 transition-all duration-300 transform hover:scale-105 animate-pulse-glow text-sm rounded-lg flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:animate-none"
         >
           <span className="mr-2">💬</span>
           व्हाट्सअँप पाठवा

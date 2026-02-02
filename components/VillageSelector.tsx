@@ -12,27 +12,31 @@ interface VillageSelectorProps {
 
 export function VillageSelector({ onVillageSelect }: VillageSelectorProps) {
   const [selectedVillage, setSelectedVillage] = useState<string>('');
-  const [villages, setVillages] = useState<string[]>([]);
   const [villageLoading, setVillageLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchVillages = async () => {
-      try {
-        const dbRef = ref(database);
-        const snapshot = await get(dbRef);
-        
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-          const villageList = Object.keys(data).sort();
-          setVillages(villageList);
-        }
-      } catch (error) {
-        console.error('Error fetching villages:', error);
-      }
-    };
+  // Define the fixed list of villages (removed duplicates)
+  const villages = [
+    "आंबी",
+    "इंदोरी",
+    "जांभवडे",
+    "जांभूळ",
+    "नवलाख उंबरे",
+    "नानोती तर्फे चाकण",
+    "बदलवाडी",
+    "ब्राम्हणवाडी (साते)",
+    "माळवाडी",
+    "मिंडेवाडी",
+    "मोहितेवाडी",
+    "राजपुरी",
+    "वराळे",
+    "वारंगवाडी",
+    "सांगवी",
+    "साते",
+    "सुदवडी",
+    "सुदुंबरे",
+    "सोमाटणे"
+  ]
 
-    fetchVillages();
-  }, []);
 
   const handleSelectVillage = async (village: string) => {
     setSelectedVillage(village);
@@ -40,11 +44,11 @@ export function VillageSelector({ onVillageSelect }: VillageSelectorProps) {
     try {
       const dbRef = ref(database);
       const snapshot = await get(child(dbRef, village));
-      
+
       if (snapshot.exists()) {
         const votersData = snapshot.val();
         const votersArray: Voter[] = Object.entries(votersData).map(([key, value]) => {
-          const voterObj: Voter = { 
+          const voterObj: Voter = {
             id: key,
             name: '',
             age: '',
@@ -59,7 +63,7 @@ export function VillageSelector({ onVillageSelect }: VillageSelectorProps) {
             serial_number: 0,
             village: ''
           };
-          
+
           if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
             Object.assign(voterObj, value);
           }
@@ -68,9 +72,11 @@ export function VillageSelector({ onVillageSelect }: VillageSelectorProps) {
         onVillageSelect(village, votersArray);
       } else {
         console.log('No data available for village:', village);
+        alert(`"${village}" गावाचा डेटा उपलब्ध नाही`);
       }
     } catch (error) {
       console.error('Error fetching village data:', error);
+      alert(`"${village}" गावाचा डेटा लोड करताना त्रुटी`);
     } finally {
       setVillageLoading(false);
     }
@@ -88,11 +94,10 @@ export function VillageSelector({ onVillageSelect }: VillageSelectorProps) {
             key={village}
             onClick={() => handleSelectVillage(village)}
             disabled={villageLoading}
-            className={`text-sm md:text-base font-semibold transition-all duration-300 transform hover:scale-105 p-3 rounded-lg border-2 ${
-              selectedVillage === village
+            className={`text-sm md:text-base font-semibold transition-all duration-300 transform hover:scale-105 p-3 rounded-lg border-2 ${selectedVillage === village
                 ? 'gradient-primary text-white shadow-lg shadow-primary/50 animate-pulse-glow border-transparent'
                 : 'border-primary/20 hover:border-primary/50 hover:shadow-md bg-background'
-            }`}
+              }`}
             style={{
               animationDelay: `${index * 50}ms`,
             }}
