@@ -39,8 +39,8 @@ const VoterDetail = ({
 
   const message = generateVoterMessage(voter);
   // Safely check if message_sent is true (handle both boolean and string cases)
-  const isMessageSent = voter.message_sent === true || voter.message_sent === 'true';
-
+// Safely check if message_sent is true (handle boolean, string, and undefined cases)
+const isMessageSent = voter.message_sent === true || voter.message_sent?.toString().toLowerCase() === 'true';
   const handleSendWhatsApp = () => {
     // Check if voter has a mobile number
     if (!voter.mobile) {
