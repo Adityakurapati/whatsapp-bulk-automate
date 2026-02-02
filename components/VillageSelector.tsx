@@ -3,18 +3,16 @@
 import { useState, useEffect } from 'react';
 import { database } from '@/lib/firebase';
 import { ref, child, get } from 'firebase/database';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Voter } from '@/lib/types';
 
 interface VillageSelectorProps {
-  onVillageSelect: (village: string, voters: any[]) => void;
-  isLoading: boolean;
+  onVillageSelect: (village: string, voters: Voter[]) => void;
 }
 
-export function VillageSelector({ onVillageSelect, isLoading }: VillageSelectorProps) {
+export function VillageSelector({ onVillageSelect }: VillageSelectorProps) {
   const [selectedVillage, setSelectedVillage] = useState<string>('');
   const [villages, setVillages] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
   const [villageLoading, setVillageLoading] = useState(false);
 
   useEffect(() => {
@@ -30,8 +28,6 @@ export function VillageSelector({ onVillageSelect, isLoading }: VillageSelectorP
         }
       } catch (error) {
         console.error('Error fetching villages:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -47,10 +43,28 @@ export function VillageSelector({ onVillageSelect, isLoading }: VillageSelectorP
       
       if (snapshot.exists()) {
         const votersData = snapshot.val();
-        const votersArray = Object.entries(votersData).map(([key, value]) => ({
-          id: key,
-          ...value,
-        }));
+        const votersArray: Voter[] = Object.entries(votersData).map(([key, value]) => {
+          const voterObj: Voter = { 
+            id: key,
+            name: '',
+            age: '',
+            booth_number: '',
+            booth_center: '',
+            gan: '',
+            gan_full: '',
+            gat: '',
+            gender: '',
+            mobile: '',
+            prabhag_number: '',
+            serial_number: 0,
+            village: ''
+          };
+          
+          if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+            Object.assign(voterObj, value);
+          }
+          return voterObj;
+        });
         onVillageSelect(village, votersArray);
       } else {
         console.log('No data available for village:', village);
@@ -70,15 +84,14 @@ export function VillageSelector({ onVillageSelect, isLoading }: VillageSelectorP
       </div>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {villages.map((village, index) => (
-          <Button
+          <button
             key={village}
             onClick={() => handleSelectVillage(village)}
-            variant={selectedVillage === village ? 'default' : 'outline'}
             disabled={villageLoading}
-            className={`text-sm md:text-base font-semibold transition-all duration-300 transform hover:scale-105 ${
+            className={`text-sm md:text-base font-semibold transition-all duration-300 transform hover:scale-105 p-3 rounded-lg border-2 ${
               selectedVillage === village
-                ? 'gradient-primary text-white shadow-lg shadow-primary/50 animate-pulse-glow'
-                : 'hover:border-primary/50 hover:shadow-md'
+                ? 'gradient-primary text-white shadow-lg shadow-primary/50 animate-pulse-glow border-transparent'
+                : 'border-primary/20 hover:border-primary/50 hover:shadow-md bg-background'
             }`}
             style={{
               animationDelay: `${index * 50}ms`,
@@ -89,7 +102,7 @@ export function VillageSelector({ onVillageSelect, isLoading }: VillageSelectorP
             ) : (
               village
             )}
-          </Button>
+          </button>
         ))}
       </div>
     </Card>

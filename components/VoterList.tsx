@@ -1,8 +1,6 @@
 'use client';
 
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { MessageCircle } from 'lucide-react';
 import { Voter } from '@/lib/types';
 
 interface VoterListProps {

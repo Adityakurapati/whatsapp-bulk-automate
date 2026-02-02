@@ -1,10 +1,6 @@
 'use client';
 
-import { useState } from "react"
-
 import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { MessageCircle } from 'lucide-react';
 import { Voter } from '@/lib/types';
 import { generateVoterMessage, generateWhatsAppLink } from '@/lib/whatsapp';
 
@@ -25,9 +21,6 @@ export function VoterDetail({
   onPrevious,
   startingMobileNumber,
 }: VoterDetailProps) {
-  const FIXED_NOMINEE_NAME = 'सौ.मेघाताई प्रशांतदादा भागवत';
-  const [nomineeName, setNomineeName] = useState(FIXED_NOMINEE_NAME);
-
   if (!voter) {
     return (
       <Card className="p-12 text-center bg-gradient-to-br from-accent/10 to-primary/5 border-2 border-dashed border-primary/30">
@@ -39,7 +32,7 @@ export function VoterDetail({
     );
   }
 
-  const message = generateVoterMessage(voter, nomineeName);
+  const message = generateVoterMessage(voter); // Removed the second argument
   const whatsappLink = generateWhatsAppLink(startingMobileNumber, message);
 
   const handleSendWhatsApp = () => {
@@ -77,31 +70,29 @@ export function VoterDetail({
 
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="flex gap-2">
-          <Button
+          <button
             onClick={onPrevious}
             disabled={currentIndex === 0}
-            variant="outline"
-            className="flex-1 md:flex-none font-bold border-2 hover:border-primary hover:bg-primary/5 transition-all bg-transparent text-sm md:text-base"
+            className="flex-1 md:flex-none font-bold border-2 hover:border-primary hover:bg-primary/5 transition-all bg-transparent text-sm md:text-base p-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             ← मागील
-          </Button>
-          <Button
+          </button>
+          <button
             onClick={onNext}
             disabled={currentIndex === totalVoters - 1}
-            variant="outline"
-            className="flex-1 md:flex-none font-bold border-2 hover:border-primary hover:bg-primary/5 transition-all bg-transparent text-sm md:text-base"
+            className="flex-1 md:flex-none font-bold border-2 hover:border-primary hover:bg-primary/5 transition-all bg-transparent text-sm md:text-base p-3 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             पुढील →
-          </Button>
+          </button>
         </div>
 
-        <Button
+        <button
           onClick={handleSendWhatsApp}
-          className="gap-2 font-bold w-full md:w-auto md:text-base py-4 md:py-6 md:px-8 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg shadow-green-500/50 hover:shadow-green-500/70 transition-all duration-300 transform hover:scale-105 animate-pulse-glow text-sm"
+          className="gap-2 font-bold w-full md:w-auto md:text-base py-4 md:py-6 md:px-8 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white shadow-lg shadow-green-500/50 hover:shadow-green-500/70 transition-all duration-300 transform hover:scale-105 animate-pulse-glow text-sm rounded-lg flex items-center justify-center"
         >
-          <MessageCircle className="w-4 h-4 md:w-5 md:h-5" />
+          <span className="mr-2">💬</span>
           व्हाट्सअँप पाठवा
-        </Button>
+        </button>
       </div>
 
       <div className="mt-6 pt-6 border-t-2 border-primary/10">

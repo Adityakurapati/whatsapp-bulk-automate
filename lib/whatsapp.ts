@@ -2,7 +2,7 @@ import { Voter } from '@/lib/types';
 
 const FIXED_NOMINEE_NAME = 'सौ.मेघाताई प्रशांतदादा भागवत';
 
-export function generateVoterMessage(voter: Voter, _nomineeName?: string): string {
+export function generateVoterMessage(voter: Voter): string {
   const message = `नाव: ${voter.name}
 गण: ${voter.gan}
 गण-संपूर्ण: ${voter.gan_full}
@@ -29,8 +29,7 @@ export function encodeMessageForWhatsApp(message: string): string {
 
 export function generateWhatsAppLink(phoneNumber: string, message: string): string {
   const encodedMessage = encodeMessageForWhatsApp(message);
-  // Remove +91 prefix if present and ensure proper formatting
-  const cleanPhone = phoneNumber.replace(/^(\+91|91)/, '');
-  const fullPhone = `91${cleanPhone}`;
-  return `https://wa.me/${fullPhone}?text=${encodedMessage}`;
+  const fullPhone = `${phoneNumber}`;
+  const whatsappLink = `https://wa.me/${fullPhone}?text=${encodedMessage}`;
+  return whatsappLink;
 }
